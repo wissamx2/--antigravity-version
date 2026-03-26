@@ -414,8 +414,8 @@
         <!-- ======================= 5. GAME SCREEN ======================= -->
         <div id="screen-game" class="screen relative">
             <div id="flash-overlay" class="absolute inset-0 z-0 pointer-events-none"></div>
-            <!-- Stickers Layer -->
-            <div id="stickers-layer" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
+            <!-- Stickers Layer (CSS Grid ensures strictly no overlap) -->
+            <div id="stickers-layer" class="absolute inset-0 z-0 grid grid-cols-2 grid-rows-2 p-4 md:p-12 overflow-hidden pointer-events-none"></div>
 
             <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start z-30 pointer-events-none">
                 <div class="glass rounded-2xl px-6 py-2 text-3xl font-bold flex items-center gap-2">
@@ -874,34 +874,31 @@
             // يمكنك بسهولة استبدال هذه الرموز بمسارات لصور قمت بتحميلها في نفس المجلد
             // مثل:  ["images/sticker1.png", "images/sticker2.png"]
             const STICKERS = ["photo_1.jpg", "photo_2.jpg", "photo_3.jpg", "photo_4.jpg", "photo_5.jpg", "photo_6.jpg", "photo_7.jpg", "photo_8.jpg", "photo_9.jpg", "photo_10.jpg", "photo_11.jpg", "photo_12.jpg", "photo_13.jpg", "photo_14.jpg", "photo_15.jpg", "photo_16.jpg", "photo_17.jpg", "photo_18.jpg", "photo_19.jpg", "photo_20.jpg", "photo_21.jpg", "photo_22.jpg", "photo_23.jpg"];
-            // منع التكرار ومنع التداخل عن طريق التوزيع في أرباع الشاشة
+            // منع التكرار عن طريق خلط المصفوفة وسحب أول 4 صور
             let shuffled = [...STICKERS].sort(() => 0.5 - Math.random()).slice(0, 4);
-            const quadrants = [
-                { t: [5, 30], l: [5, 40] }, // أعلى اليمين
-                { t: [5, 30], l: [50, 85] }, // أعلى اليسار
-                { t: [50, 75], l: [5, 40] }, // أسفل اليمين
-                { t: [50, 75], l: [50, 85] } // أسفل اليسار
-            ];
 
             for (let i = 0; i < 4; i++) {
+                let cell = document.createElement('div');
+                // Flex box to center within strictly non-overlapping Grid cells
+                cell.className = 'flex items-center justify-center p-2';
+
                 let s = shuffled[i];
                 let span = document.createElement('span');
 
                 if (s.includes('.') || s.includes('/')) {
-                    // إذا كان مسار صورة
-                    span.innerHTML = `<img src="${s}" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-xl opacity-50">`;
+                    // إذا كان مسار صورة (حجم 150% تقريباً وشفافية 70%)
+                    span.innerHTML = `<img src="${s}" class="w-32 h-32 md:w-48 md:h-48 object-contain drop-shadow-xl opacity-70">`;
                 } else {
                     // إذا كان رمز تعبيري
                     span.innerText = s;
-                    span.className = 'text-[8rem] md:text-[12rem] drop-shadow-lg opacity-50';
+                    span.className = 'text-[6rem] md:text-[8rem] drop-shadow-lg opacity-70';
                 }
 
-                span.classList.add('absolute', 'sticker-anim');
-                let q = quadrants[i];
-                span.style.top = Math.floor(q.t[0] + Math.random() * (q.t[1] - q.t[0])) + '%';
-                span.style.left = Math.floor(q.l[0] + Math.random() * (q.l[1] - q.l[0])) + '%';
+                span.classList.add('sticker-anim');
                 span.style.animationDelay = (Math.random() * 4) + 's';
-                layer.appendChild(span);
+                
+                cell.appendChild(span);
+                layer.appendChild(cell);
             }
         }
 
