@@ -15,7 +15,7 @@
             overflow-x: hidden;
             overflow-y: auto;
             touch-action: pan-y;
-            background-color: #000000;
+            background-color: #0f172a;
             color: #f8fafc;
             user-select: none;
             -webkit-user-select: none;
@@ -412,10 +412,12 @@
         </div>
 
         <!-- ======================= 5. GAME SCREEN ======================= -->
-        <div id="screen-game" class="screen relative">
+        <div id="screen-game" class="screen relative bg-black">
             <div id="flash-overlay" class="absolute inset-0 z-0 pointer-events-none"></div>
             <!-- Stickers Layer (CSS Grid ensures strictly no overlap) -->
-            <div id="stickers-layer" class="absolute inset-0 z-0 grid grid-cols-2 grid-rows-2 p-4 md:p-12 overflow-hidden pointer-events-none"></div>
+            <div id="stickers-layer"
+                class="absolute inset-0 z-0 grid grid-cols-2 grid-rows-2 p-4 md:p-12 overflow-hidden pointer-events-none">
+            </div>
 
             <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start z-30 pointer-events-none">
                 <div class="glass rounded-2xl px-6 py-2 text-3xl font-bold flex items-center gap-2">
@@ -444,7 +446,7 @@
             </div>
 
             <div
-                class="z-10 w-full text-center px-12 top-[-30px] pointer-events-none flex flex-col justify-center h-full relative">
+                class="z-[100] w-full text-center px-12 top-[-30px] pointer-events-none flex flex-col justify-center h-full relative">
                 <div id="wildcard-badge"
                     class="absolute top-[20%] right-1/2 translate-x-1/2 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full hidden">
                     بطاقة ذهبية (2 نقاط)</div>
@@ -896,7 +898,7 @@
 
                 span.classList.add('sticker-anim');
                 span.style.animationDelay = (Math.random() * 4) + 's';
-                
+
                 cell.appendChild(span);
                 layer.appendChild(cell);
             }
