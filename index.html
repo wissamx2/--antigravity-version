@@ -149,6 +149,24 @@
             animation: float-punish 1s ease-out forwards;
         }
 
+        @keyframes float-sticker {
+            0% {
+                transform: translateY(0) rotate(-5deg);
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(5deg) scale(1.1);
+            }
+
+            100% {
+                transform: translateY(0) rotate(-5deg);
+            }
+        }
+
+        .sticker-anim {
+            animation: float-sticker 6s infinite ease-in-out;
+        }
+
         #modal-overlay {
             display: none;
             backdrop-filter: blur(5px);
@@ -396,6 +414,8 @@
         <!-- ======================= 5. GAME SCREEN ======================= -->
         <div id="screen-game" class="screen relative">
             <div id="flash-overlay" class="absolute inset-0 z-0 pointer-events-none"></div>
+            <!-- Stickers Layer -->
+            <div id="stickers-layer" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
 
             <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start z-10 pointer-events-none">
                 <div class="glass rounded-2xl px-6 py-2 text-3xl font-bold flex items-center gap-2">
@@ -404,7 +424,11 @@
                 <!-- Early End btn injected dynamically right corner -->
                 <button id="btn-end-early"
                     class="hidden pointer-events-auto bg-red-600/80 hover:bg-red-500 backdrop-blur px-5 py-2 rounded-full text-lg font-bold shadow-lg flex items-center gap-2 border border-red-400 z-[60]">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                     إنهاء الجولة
                 </button>
 
@@ -460,16 +484,22 @@
 
             <div class="flex flex-col md:flex-row w-[95%] max-w-4xl gap-4 flex-1 mb-8" style="min-height: 40vh;">
                 <div class="glass flex-1 rounded-2xl p-4 flex flex-col overflow-hidden relative">
-                    <h3 class="text-xl font-bold text-green-400 mb-3 border-b border-green-500/30 pb-2 text-center sticky top-0 bg-slate-900/90 z-10 backdrop-blur-md">
+                    <h3
+                        class="text-xl font-bold text-green-400 mb-3 border-b border-green-500/30 pb-2 text-center sticky top-0 bg-slate-900/90 z-10 backdrop-blur-md">
                         إجابات صحيحة</h3>
-                    <ul id="list-correct" class="overflow-y-auto flex-1 text-center space-y-3 text-lg pb-4 pt-2 content-start flex flex-col"></ul>
+                    <ul id="list-correct"
+                        class="overflow-y-auto flex-1 text-center space-y-3 text-lg pb-4 pt-2 content-start flex flex-col">
+                    </ul>
                 </div>
 
                 <div class="glass flex-1 rounded-2xl p-4 flex flex-col overflow-hidden relative">
-                    <h3 class="text-xl font-bold text-red-400 mb-3 border-b border-red-500/30 pb-2 text-center sticky top-0 bg-slate-900/90 z-10 backdrop-blur-md">تم
+                    <h3
+                        class="text-xl font-bold text-red-400 mb-3 border-b border-red-500/30 pb-2 text-center sticky top-0 bg-slate-900/90 z-10 backdrop-blur-md">
+                        تم
                         تخطيها</h3>
                     <ul id="list-passed"
-                        class="overflow-y-auto flex-1 text-center space-y-3 text-md text-slate-300 pb-4 pt-2 content-start flex flex-col"></ul>
+                        class="overflow-y-auto flex-1 text-center space-y-3 text-md text-slate-300 pb-4 pt-2 content-start flex flex-col">
+                    </ul>
                 </div>
             </div>
 
@@ -569,11 +599,11 @@
                 "عم يشرب متة مغلية وانحرق لسانه", "شخص عم يحاول يطفي شمعة عيد ميلاده وما عم تنطفي", "عم يمثل انو بيعرف يطبخ وحرق الأكل", "واحد فتح الكاميرا الامامية بالغلط وانفجع بشكلو"
             ],
             "أفعال للتمثيل بدون كلام": [
-                "يسبح بسرعة", "يتقيأ", "ينام بعمق", "يكش ذبان", "يرقص شرقي", "يتسلق جبل", "يحلق ذقنه", "يقرأ جريدة", 
-                "يطبخ طبخة غريبة", "يلعب بلايستيشن", "يعزف جيتار", "يعزف طبلة", "يبكي بحرقة", "يضحك بدون صوت", "يسوق سيارة", 
+                "يسبح بسرعة", "يتقيأ", "ينام بعمق", "يكش ذبان", "يرقص شرقي", "يتسلق جبل", "يحلق ذقنه", "يقرأ جريدة",
+                "يطبخ طبخة غريبة", "يلعب بلايستيشن", "يعزف جيتار", "يعزف طبلة", "يبكي بحرقة", "يضحك بدون صوت", "يسوق سيارة",
                 "يركب خيل", "يصيد سمك", "يتزلج على الثلج", "يحط مكياج", "يغسل المواعين", "يكوي الملابس", "ينظف الأرضيات",
                 "يرقص باليه", "يغني راب", "يلعب كاراتيه", "يرفع أثقال", "يرمي رمح", "يلعب تنس طاولة", "يصور سيلفي", "يتكلم بالموبايل معصب",
-                "ياكل سباغيتي", "يفتح علبة كولا", "يشرب قهوة سخنة", "يتمدد", "يمشي على حبل", "يقفز بالحبل", "يخيط ملابس", "يقرأ كتاب مرعب", 
+                "ياكل سباغيتي", "يفتح علبة كولا", "يشرب قهوة سخنة", "يتمدد", "يمشي على حبل", "يقفز بالحبل", "يخيط ملابس", "يقرأ كتاب مرعب",
                 "يتفرج على فيلم رعب", "يعمل عملية جراحية", "يبيع ذرة", "يشرب ارجيلة", "يسوق بسكليت", "يلعب بولينغ", "يعمل مساج", "يحفر حفرة",
                 "يقطف تفاح", "يطلي الحيط", "يعمر حيط", "يحلب بقرة", "يهرب من لص", "يلعب قمار", "يشحذ مصاري", "يعطي بوسة طايرة", "يعطس", "يسعل",
                 "يختنق", "يشرب ببيبرونة", "يحبو كالأطفال", "يلعب غميضة", "يصلح سيارة", "يسوق طيارة", "يطلق نار", "يرمي سهم", "يضرب بوكس"
@@ -849,8 +879,36 @@
             setTimeout(() => { flashOverlay.classList.remove(`flash-${type}`); }, 300);
         }
 
+        function generateStickers() {
+            const layer = document.getElementById('stickers-layer');
+            layer.innerHTML = '';
+            // يمكنك بسهولة استبدال هذه الرموز بمسارات لصور قمت بتحميلها في نفس المجلد
+            // مثل:  ["images/sticker1.png", "images/sticker2.png"]
+            const STICKERS = ["photo_1.jpg", "photo_2.jpg", "photo_3.jpg", "photo_4.jpg", "photo_5.jpg", "photo_6.jpg", "photo_7.jpg", "photo_8.jpg", "photo_9.jpg", "photo_10.jpg", "photo_11.jpg", "photo_12.jpg", "photo_13.jpg", "photo_14.jpg", "photo_15.jpg", "photo_16.jpg", "photo_17.jpg", "photo_18.jpg", "photo_19.jpg", "photo_20.jpg", "photo_21.jpg", "photo_22.jpg", "photo_23.jpg"];
+            for (let i = 0; i < 4; i++) {
+                let s = STICKERS[Math.floor(Math.random() * STICKERS.length)];
+                let span = document.createElement('span');
+
+                if (s.includes('.') || s.includes('/')) {
+                    // إذا كان مسار صورة
+                    span.innerHTML = `<img src="${s}" class="w-20 h-20 object-contain drop-shadow-xl opacity-70">`;
+                } else {
+                    // إذا كان رمز تعبيري
+                    span.innerText = s;
+                    span.className = 'text-7xl drop-shadow-lg opacity-40';
+                }
+
+                span.classList.add('absolute', 'sticker-anim');
+                span.style.top = Math.floor(15 + Math.random() * 65) + '%';
+                span.style.left = Math.floor(10 + Math.random() * 80) + '%';
+                span.style.animationDelay = (Math.random() * 4) + 's';
+                layer.appendChild(span);
+            }
+        }
+
         function startRoundPlay() {
             showScreen('game');
+            generateStickers();
             STATE.isGameActive = true; STATE.motionEnabled = true;
             elGameScore.innerText = "0"; elGameTimer.innerText = STATE.timer;
 
@@ -875,12 +933,19 @@
             STATE.isGoldenWord = Math.random() < 0.1;
             elGameWord.innerText = STATE.currentWordObj;
 
+            // تصغير الخط أتوماتيكياً إذا كانت الكلمة طويلة جداً لمنع قصها
+            let wordLength = STATE.currentWordObj.length;
+            let textSize = "text-6xl md:text-[8rem]"; // الكلمات القصيرة
+            if (wordLength > 10) textSize = "text-5xl md:text-7xl";
+            if (wordLength > 18) textSize = "text-4xl md:text-5xl";
+            if (wordLength > 28) textSize = "text-3xl md:text-4xl";
+
             if (STATE.isGoldenWord) {
-                elGameWord.className = "text-6xl md:text-[8rem] font-black leading-tight drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] text-yellow-400 mt-2 transition-transform duration-100";
+                elGameWord.className = `${textSize} max-w-[90%] mx-auto px-2 break-words font-black leading-tight drop-shadow-[0_0_20px_rgba(250,204,21,0.8)] text-yellow-400 mt-2 transition-transform duration-100`;
                 document.getElementById('wildcard-badge').classList.remove('hidden');
                 playWildcard();
             } else {
-                elGameWord.className = "text-6xl md:text-[8rem] font-black leading-tight drop-shadow-2xl transition-transform duration-100 mt-2";
+                elGameWord.className = `${textSize} max-w-[90%] mx-auto px-2 break-words font-black leading-tight drop-shadow-2xl transition-transform duration-100 mt-2`;
                 document.getElementById('wildcard-badge').classList.add('hidden');
             }
             animateWordScale();
