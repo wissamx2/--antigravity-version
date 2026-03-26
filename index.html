@@ -221,7 +221,7 @@
 <body class="bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-white">
 
     <!-- Navbar Overlay For Settings -->
-    <div class="fixed top-0 left-0 w-full p-4 flex justify-end gap-3 z-[100] pointer-events-none">
+    <div class="fixed bottom-6 left-6 z-[100] pointer-events-none">
         <!-- أزرار الإعدادات طافية -->
         <button id="btn-toggle-mute"
             class="pointer-events-auto bg-slate-800 p-3 rounded-full border border-slate-600 hover:bg-slate-700 transition">
@@ -417,7 +417,7 @@
             <!-- Stickers Layer -->
             <div id="stickers-layer" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
 
-            <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start z-10 pointer-events-none">
+            <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start z-30 pointer-events-none">
                 <div class="glass rounded-2xl px-6 py-2 text-3xl font-bold flex items-center gap-2">
                     <span id="game-timer">60</span>
                 </div>
@@ -452,24 +452,13 @@
                     class="text-7xl md:text-[8rem] font-black leading-tight drop-shadow-2xl transition-transform duration-100 mt-2">
                     كلمة
                 </h2>
-                <p class="text-slate-400 mt-10 text-lg hidden md:block">ميل الهاتف للأسفل = صحيح | للأعلى = تخطي</p>
-                <div class="absolute bottom-10 left-0 right-0 text-center">
-                    <p class="text-red-500 font-bold opacity-60">تخطي 3 مرات متتالية = -1 نقطة</p>
-                </div>
             </div>
 
-            <div class="absolute inset-0 z-20 flex w-full h-full">
+            <div class="absolute inset-0 z-20 flex w-full h-full opacity-0">
                 <!-- Right (Correct in RTL) -->
-                <div id="zone-correct"
-                    class="w-1/2 h-full flex flex-col justify-center items-start pl-4 opacity-30 active:opacity-60 transition-opacity">
-                    <span class="text-green-500 font-bold text-4xl transform -rotate-90 origin-left">للأسفل
-                        (صحيح)</span>
-                </div>
+                <div id="zone-correct" class="w-1/2 h-full cursor-pointer"></div>
                 <!-- Left (Pass) -->
-                <div id="zone-pass"
-                    class="w-1/2 h-full flex flex-col justify-center items-end pr-4 opacity-30 active:opacity-60 transition-opacity">
-                    <span class="text-red-500 font-bold text-4xl transform rotate-90 origin-right">للأعلى (تخطي)</span>
-                </div>
+                <div id="zone-pass" class="w-1/2 h-full cursor-pointer"></div>
             </div>
         </div>
 
@@ -885,22 +874,32 @@
             // يمكنك بسهولة استبدال هذه الرموز بمسارات لصور قمت بتحميلها في نفس المجلد
             // مثل:  ["images/sticker1.png", "images/sticker2.png"]
             const STICKERS = ["photo_1.jpg", "photo_2.jpg", "photo_3.jpg", "photo_4.jpg", "photo_5.jpg", "photo_6.jpg", "photo_7.jpg", "photo_8.jpg", "photo_9.jpg", "photo_10.jpg", "photo_11.jpg", "photo_12.jpg", "photo_13.jpg", "photo_14.jpg", "photo_15.jpg", "photo_16.jpg", "photo_17.jpg", "photo_18.jpg", "photo_19.jpg", "photo_20.jpg", "photo_21.jpg", "photo_22.jpg", "photo_23.jpg"];
+            // منع التكرار ومنع التداخل عن طريق التوزيع في أرباع الشاشة
+            let shuffled = [...STICKERS].sort(() => 0.5 - Math.random()).slice(0, 4);
+            const quadrants = [
+                { t: [5, 30], l: [5, 40] }, // أعلى اليمين
+                { t: [5, 30], l: [50, 85] }, // أعلى اليسار
+                { t: [50, 75], l: [5, 40] }, // أسفل اليمين
+                { t: [50, 75], l: [50, 85] } // أسفل اليسار
+            ];
+
             for (let i = 0; i < 4; i++) {
-                let s = STICKERS[Math.floor(Math.random() * STICKERS.length)];
+                let s = shuffled[i];
                 let span = document.createElement('span');
 
                 if (s.includes('.') || s.includes('/')) {
                     // إذا كان مسار صورة
-                    span.innerHTML = `<img src="${s}" class="w-20 h-20 object-contain drop-shadow-xl opacity-70">`;
+                    span.innerHTML = `<img src="${s}" class="w-48 h-48 md:w-64 md:h-64 object-contain drop-shadow-xl opacity-50">`;
                 } else {
                     // إذا كان رمز تعبيري
                     span.innerText = s;
-                    span.className = 'text-7xl drop-shadow-lg opacity-40';
+                    span.className = 'text-[8rem] md:text-[12rem] drop-shadow-lg opacity-50';
                 }
 
                 span.classList.add('absolute', 'sticker-anim');
-                span.style.top = Math.floor(15 + Math.random() * 65) + '%';
-                span.style.left = Math.floor(10 + Math.random() * 80) + '%';
+                let q = quadrants[i];
+                span.style.top = Math.floor(q.t[0] + Math.random() * (q.t[1] - q.t[0])) + '%';
+                span.style.left = Math.floor(q.l[0] + Math.random() * (q.l[1] - q.l[0])) + '%';
                 span.style.animationDelay = (Math.random() * 4) + 's';
                 layer.appendChild(span);
             }
@@ -1051,8 +1050,8 @@
             c1.className = "glass flex-1 rounded-3xl p-6 text-center w-full transform transition-all";
             c2.className = "glass flex-1 rounded-3xl p-6 text-center w-full transform transition-all";
 
-            if (score1 > score2) { wEl.innerText = `🏆 مبروك للفريق الأول!`; wEl.className = 'text-3xl font-bold bg-blue-600 px-8 py-4 rounded-3xl text-white mb-6 animate-pulse'; c1.classList.add('scale-110', 'border-4', 'border-yellow-400'); }
-            else if (score2 > score1) { wEl.innerText = `🏆 مبروك للفريق الثاني!`; wEl.className = 'text-3xl font-bold bg-pink-600 px-8 py-4 rounded-3xl text-white mb-6 animate-pulse'; c2.classList.add('scale-110', 'border-4', 'border-yellow-400'); }
+            if (score1 > score2) { wEl.innerText = `🏆  فريق الأساطير فاز!`; wEl.className = 'text-3xl font-bold bg-blue-600 px-8 py-4 rounded-3xl text-white mb-6 animate-pulse'; c1.classList.add('scale-110', 'border-4', 'border-yellow-400'); }
+            else if (score2 > score1) { wEl.innerText = `🏆  فريق الأساطير فاز!`; wEl.className = 'text-3xl font-bold bg-pink-600 px-8 py-4 rounded-3xl text-white mb-6 animate-pulse'; c2.classList.add('scale-110', 'border-4', 'border-yellow-400'); }
             else { wEl.innerText = `🤝 تعادل!`; wEl.className = 'text-3xl font-bold bg-slate-600 px-8 py-4 rounded-3xl text-white mb-6 animate-pulse'; }
         }
 
