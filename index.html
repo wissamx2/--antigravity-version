@@ -83,10 +83,13 @@
             transform: scale(1.05);
         }
 
-        .time-radio:checked+label {
+        .time-radio:checked+div {
             background: #eab308;
             border-color: transparent;
             color: #000;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.4);
+            transform: scale(1.05);
+            transition: all 0.2s ease;
         }
 
         #flash-overlay {
@@ -366,15 +369,7 @@
 
         <!-- ======================= 3. PRE-TURN SCREEN ======================= -->
         <div id="screen-pre-turn" class="screen">
-            <!-- Early end visual block trick -->
-            <button id="btn-end-early"
-                class="hidden pointer-events-auto bg-red-600/60 hover:bg-red-500 backdrop-blur px-4 py-2 mt-4 rounded-full text-sm font-bold shadow-lg fixed top-6 right-6 z-[60] flex items-center gap-2 border border-red-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                إنهاء الجولة مبكراً
-            </button>
+            <!-- Removed early end from here to fix landscape mode -->
 
             <h2 class="text-3xl text-slate-300 font-bold mb-4 text-center">الجولة <span id="announce-round-number"
                     class="text-white">1</span> - حان دور:</h2>
@@ -407,6 +402,11 @@
                     <span id="game-timer">60</span>
                 </div>
                 <!-- Early End btn injected dynamically right corner -->
+                <button id="btn-end-early"
+                    class="hidden pointer-events-auto bg-red-600/80 hover:bg-red-500 backdrop-blur px-5 py-2 rounded-full text-lg font-bold shadow-lg flex items-center gap-2 border border-red-400 z-[60]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    إنهاء الجولة
+                </button>
 
                 <div class="glass rounded-2xl px-6 py-2 text-xl font-bold text-green-400 drop-shadow-md bg-opacity-80">
                     جولتي: <span id="game-score">0</span>
@@ -458,18 +458,18 @@
                     class="text-green-400 font-black text-5xl ml-2 drop-shadow-lg block mt-2">0</span>
             </div>
 
-            <div class="flex flex-col md:flex-row w-[95%] max-w-4xl gap-4 h-[30vh] mb-8">
-                <div class="glass flex-1 rounded-2xl p-4 flex flex-col overflow-hidden">
-                    <h3 class="text-xl font-bold text-green-400 mb-3 border-b border-green-500/30 pb-2 text-center">
+            <div class="flex flex-col md:flex-row w-[95%] max-w-4xl gap-4 flex-1 mb-8" style="min-height: 40vh;">
+                <div class="glass flex-1 rounded-2xl p-4 flex flex-col overflow-hidden relative">
+                    <h3 class="text-xl font-bold text-green-400 mb-3 border-b border-green-500/30 pb-2 text-center sticky top-0 bg-slate-900/90 z-10 backdrop-blur-md">
                         إجابات صحيحة</h3>
-                    <ul id="list-correct" class="overflow-y-auto flex-1 text-center space-y-2 text-lg pb-4"></ul>
+                    <ul id="list-correct" class="overflow-y-auto flex-1 text-center space-y-3 text-lg pb-4 pt-2 content-start flex flex-col"></ul>
                 </div>
 
-                <div class="glass flex-1 rounded-2xl p-4 flex flex-col overflow-hidden">
-                    <h3 class="text-xl font-bold text-red-400 mb-3 border-b border-red-500/30 pb-2 text-center">تم
+                <div class="glass flex-1 rounded-2xl p-4 flex flex-col overflow-hidden relative">
+                    <h3 class="text-xl font-bold text-red-400 mb-3 border-b border-red-500/30 pb-2 text-center sticky top-0 bg-slate-900/90 z-10 backdrop-blur-md">تم
                         تخطيها</h3>
                     <ul id="list-passed"
-                        class="overflow-y-auto flex-1 text-center space-y-2 text-sm text-slate-400 pb-4"></ul>
+                        class="overflow-y-auto flex-1 text-center space-y-3 text-md text-slate-300 pb-4 pt-2 content-start flex flex-col"></ul>
                 </div>
             </div>
 
@@ -547,21 +547,49 @@
 
     <script>
         const WORD_DB = {
-            "الجيم": ["دمبل", "سكوات", "ديدليفت", "بروتين", "بنش بريس", "كارديو", "عضلة", "مكملات", "تمرين", "نادي", "مدرب", "أوزان"],
-            "مكس عام": [
+            "الجيم والرياضة": ["دمبل", "سكوات", "ديدليفت", "بروتين", "بنش بريس", "كارديو", "عضلة", "مكملات", "تمرين", "نادي", "مدرب", "أوزان", "ميزان", "سير جري", "حبل القفز", "ستيرويد", "تضخيم", "تنشيف", "كابتن", "بايسبس", "ترايسبس", "بطولات", "حديد", "بوش أب", "عقلة", "بطن", "حرق دهون", "لياقة", "دايت", "ماراثون", "سباحة", "ملاكمة", "جودو", "دراجة", "سعرات", "تمرين ظهر", "تمرين أكتاف", "سحب كابل", "مقاومة", "إحماء", "تعرق", "مكمل غذائي", "كرياتين", "فيتامين", "بروتين بار", "شنطة النادي", "مسبح", "يوجا", "تأمل", "استطالة", "أولمبياد", "كأس العالم", "حكم مباراة", "صافرة", "مدافع", "حارس مرمى", "مهاجم", "تسلل", "ركلة جزاء", "كرت أحمر", "تيكواندو", "كاراتيه", "مصارعة", "جون سينا", "رالي", "فورمولا 1", "تنس طاولة", "ريشة", "جمباز", "قفز بالزانة", "تمرين قاسي", "تمزق عضلي", "حزام الظهر", "قفازات", "صالة ألعاب", "ماء بارد", "سونا", "جاكوزي", "مساج", "كربوهيدرات", "دهون صحية", "شوفان", "تونا", "صدور دجاج", "بيض مسلوق", "موز", "عصير طبيعي", "نظام غذائي", "وجبة مفتوحة", "يوم الغش", "صيام متقطع", "أمينو أسيد", "حرق سعرات", "شد عضلي", "ميزان المطبخ", "تمارين سويدية", "بيلاتس", "ألعاب قوى", "ميدالية ذهبية", "كأس البطولة", "ملعب", "مدرجات", "مشجعين", "هتاف", "معلق رياضي", "ميسي", "رونالدو", "محمد صلاح"],
+            "مكس عام ومحرج": [
                 "موبايل", "شاورما", "متة", "سيارة", "طيارة", "جواز سفر", "بيتزا", "نظارات شمسية", "عطر", "مراية", "مكياج",
                 "سشوار", "بلايستيشن", "انستغرام", "كاميرا", "سماعات", "مطعم", "مسبح", "جاكيت", "بنطلون جينز", "مفاتيح",
                 "جزدان", "خاتم", "هدية", "عيد ميلاد", "عرس", "دكتور", "جامعة", "امتحان", "تيك توك", "نتفليكس",
                 "بوشار", "شوكولا", "براد", "مكيف", "بسكليت", "تكسي", "إنترنت", "شاحن", "راوتر", "لابتوب",
                 "ساعة يد", "قهوة", "أرجيلة", "زرافة", "تمساح", "كنغر", "سلحفاة", "يسبح", "يرقص", "يبكي",
-                "يطبخ", "يلعب رياضة", "قمر", "شمس", "بحر", "ثلج", "عاصفة", "شبح", "ساحر", "حلاق", "محامي", "رومانسية"
+                "يطبخ", "قمر", "شمس", "بحر", "ثلج", "عاصفة", "شبح", "ساحر", "حلاق", "محامي", "رومانسية",
+                "تأخير", "مقلب", "كذبة بيضا", "فاتورة", "مدير غاضب", "استقالة", "راتب ضعيف", "بنزين", "مخالفة سير", "شرطي", "سرقة", "شخير", "كابوس", "سقوط مفاجئ", "ضحكة قوية", "كرش", "صلعة", "شيب", "عملية تجميل", "بوتوكس", "فلتر سناببات", "مكالمة فيديو", "انقطاع الكهربا", "لايك", "بلوك", "هاكر", "فيروس", "نوم عميق", "خيانة", "حب من طرف واحد", "عريس لقطة", "مهر", "شبكة", "شهر عسل", "حماتي", "خناقة خناقة", "جار مزعج", "كلب بوليسي", "قطة شرسة", "فأر", "عنكبوت", "صرصور طائر", "شبشب", "مخسرة", "تسمم غذائي", "إندومي", "بطاطا مقلية", "كاتشب", "مايونيز", "روج", "مسكرا", "ايلاينر", "سيلفي", "فلاتر", "ايفون 15", "سامسونج", "تويتر", "يوتيوب", "واتساب", "قروب العيلة", "رسالة صوتية طويلة", "مشاكل نت", "طالب كسلان", "استاذ شرير", "تفتيش موبايل", "رقم سري", "فضامة", "ديون", "إيجار", "مصاري", "محفظة فاضية"
             ],
-            "أفعال للتمثيل": ["يسبح", "يطبخ", "ينام", "يلعب سلة", "يرقص", "يتسلق", "يحلق ذقنه", "يقرأ كتاب"],
+            "مواقف مضحكة للتمثيل": [
+                "شخص انزلق بقشرة موز", "واحد انقطعت كهربتو وهو بيتحمم", "شخص بيطارد ذبابة ومو قادر يقتلها", "عطسة معلقة", "شخص ضيع موبايله وهو بايده",
+                "واحد بياكل ليمونة حامضة", "بنت بتمشي بكعب لمرة الأولى", "شخص بيمشي بالشارع وخبط بعمود", "شخص شاف حبيبه السابق فجأة", "واحد بيكذب ومصدق حالو",
+                "واحد بيرقص بقدام المراية وانكشف", "شخص خايف من ابرة الدكتور", "نايم وبيحلم انو بيقع", "عم ياكل اندومي حارة جداً", "بياكل سندويشة و الشاورما وقعت على ثيابه",
+                "شخص بيحاول يفتح علبة قاسية", "طالب انلقط عم يغش بالامتحان", "شخص عم يحاول يتذكر كلمة ونساها", "عم يحكي مع حدا وطلع الشخص حاطط سماعات", "شخص عم يتصور سيلفي ووقعت الكاميرا",
+                "بنت خايفة من صرصور وطار عليها", "طالب نام بالصف والاستاذ شافه", "واحد عم يخنقو القميص ومو قادر يفكو", "شخص بيبكي على مسلسل تركي", "بنت بتسشور شعرها وانحرق",
+                "واحد عم يغني ومندمج وطلع صوتو بشع", "شخص انكب عليه قهوة سخنة", "واحد عم يقيس بنطلون ومو راضي يدخل فيه", "شخص عم يحاول يهرب من كلب بيهوهو", "عم يحاول يشيل لزقة جروح",
+                "شخص بياكل وجبة وصص احترق لسانه", "طالب عم يتأخر على باص المدرسة وعم يركض وراه", "واحد عم يكاسر البياع على السعر", "بنت عم تحط روج بالسيارة والسيارة مطبت",
+                "شخص عم ينفخ بالونة وطقت بوشو", "شخص عم يحاول يمشي على الجليد", "واحد لابس بدلة عرس وعم يأكل بصعوبة مشان ما يوسخها", "شخص عم يدور على نظاراته وهي على راسه",
+                "عم يشرب متة مغلية وانحرق لسانه", "شخص عم يحاول يطفي شمعة عيد ميلاده وما عم تنطفي", "عم يمثل انو بيعرف يطبخ وحرق الأكل", "واحد فتح الكاميرا الامامية بالغلط وانفجع بشكلو"
+            ],
+            "أفعال للتمثيل بدون كلام": [
+                "يسبح بسرعة", "يتقيأ", "ينام بعمق", "يكش ذبان", "يرقص شرقي", "يتسلق جبل", "يحلق ذقنه", "يقرأ جريدة", 
+                "يطبخ طبخة غريبة", "يلعب بلايستيشن", "يعزف جيتار", "يعزف طبلة", "يبكي بحرقة", "يضحك بدون صوت", "يسوق سيارة", 
+                "يركب خيل", "يصيد سمك", "يتزلج على الثلج", "يحط مكياج", "يغسل المواعين", "يكوي الملابس", "ينظف الأرضيات",
+                "يرقص باليه", "يغني راب", "يلعب كاراتيه", "يرفع أثقال", "يرمي رمح", "يلعب تنس طاولة", "يصور سيلفي", "يتكلم بالموبايل معصب",
+                "ياكل سباغيتي", "يفتح علبة كولا", "يشرب قهوة سخنة", "يتمدد", "يمشي على حبل", "يقفز بالحبل", "يخيط ملابس", "يقرأ كتاب مرعب", 
+                "يتفرج على فيلم رعب", "يعمل عملية جراحية", "يبيع ذرة", "يشرب ارجيلة", "يسوق بسكليت", "يلعب بولينغ", "يعمل مساج", "يحفر حفرة",
+                "يقطف تفاح", "يطلي الحيط", "يعمر حيط", "يحلب بقرة", "يهرب من لص", "يلعب قمار", "يشحذ مصاري", "يعطي بوسة طايرة", "يعطس", "يسعل",
+                "يختنق", "يشرب ببيبرونة", "يحبو كالأطفال", "يلعب غميضة", "يصلح سيارة", "يسوق طيارة", "يطلق نار", "يرمي سهم", "يضرب بوكس"
+            ],
+            "شخصيات ومشاهير": [
+                "باتمان", "سبايدرمان", "سوبرمان", "عادل إمام", "محمد سعد (اللمبي)", "ياسر العظمة", "دريد لحام", "باسم ياخور", "قصي خولي", "تيم حسن",
+                "ميسي", "كريستيانو رونالدو", "نيمار", "محمد صلاح", "عمرو دياب", "نانسي عجرم", "هيفاء وهبي", "كاظم الساهر", "عبد الحليم حافظ", "أم كلثوم",
+                "السنافر", "سبونج بوب", "توم وجيري", "المحقق كونان", "سندريلا", "بياض الثلج", "شرشبيل", "ماشا والدب", "هاري بوتر", "جوكر",
+                "مارادونا", "مايكل جاكسون", "تشارلي تشابلن", "رامز جلال", "ناصر القصبي", "مستر بين", "ألبرت أينشتاين", "أبو بكر سالم", "أبو عصام", "أم زكي",
+                "معتز (باب الحارة)", "غوار الطوشة", "حسني البورزان", "جون سينا", "بروس لي", "سيلفستر ستالون (رامبو)", "آرنولد (المدمر)", "توم كروز", "ليوناردو دي كابريو"
+            ],
             "كلمات مخصصة": []
         };
 
         const STATE = {
-            currentCategory: "مكس عام",
+            currentCategory: "مكس عام ومحرج",
             wordsDeck: [],
             team1: { name: "الفريق الأول", players: [], score: 0 },
             team2: { name: "الفريق الثاني", players: [], score: 0 },
@@ -933,8 +961,8 @@
 
             const listCorrect = document.getElementById('list-correct'); const listPassed = document.getElementById('list-passed');
             listCorrect.innerHTML = ''; listPassed.innerHTML = '';
-            STATE.roundCorrectList.forEach(w => { const li = document.createElement('li'); li.innerText = w; li.className = 'border border-green-700/30 rounded py-1 px-2 bg-green-900/10 font-bold'; listCorrect.appendChild(li); });
-            STATE.roundPassedList.forEach(w => { const li = document.createElement('li'); li.innerText = w; li.className = 'line-through opacity-70 border border-slate-700/50 rounded py-1 px-2 mb-1'; listPassed.appendChild(li); });
+            STATE.roundCorrectList.forEach(w => { const li = document.createElement('li'); li.innerText = w; li.className = 'border border-green-700/50 rounded-lg py-3 px-4 bg-green-900/30 font-bold w-full break-words shadow-sm flex-shrink-0'; listCorrect.appendChild(li); });
+            STATE.roundPassedList.forEach(w => { const li = document.createElement('li'); li.innerText = w; li.className = 'line-through opacity-60 border border-slate-700/50 rounded-lg py-3 px-4 mb-2 bg-slate-800/50 w-full break-words shadow-sm flex-shrink-0'; listPassed.appendChild(li); });
         }
 
         document.getElementById('btn-next-turn').addEventListener('click', () => {
